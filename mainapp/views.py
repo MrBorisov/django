@@ -1,5 +1,6 @@
 from django.shortcuts import render
-import datetime
+
+from mainapp.models import Product, ProductCategory
 
 
 def main(request):
@@ -10,10 +11,15 @@ def main(request):
     return render(request, 'mainapp/index.html', context)
 
 
-def products(request):
+def products(request, pk=None):
+    print(pk)
+    product_1 = Product.objects.all()[0]
+    menu_prod = ProductCategory.objects.all()
     context = {
         'page_title': 'продукты',
         'cl_menu_prod': 'active',
+        'product_1': product_1,
+        'menu_prod': menu_prod,
     }
     return render(request, 'mainapp/products.html', context)
 
