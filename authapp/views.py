@@ -3,19 +3,21 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from authapp.forms import ShopUserLoginForm, ShopUserCreationForm, ShopUserUserChangeForm
+from authapp.forms import ShopUserLoginForm, ShopUserCreationForm, ShopUserChangeForm
 
 
 def login(request):
+    redirect_to = request.GET.get('next', '')
     if request.method == 'POST':
         form = ShopUserLoginForm(data=request.POST)
         if form.is_valid():
             username = request.POST.get('username')
             password = request.POST.get('password')
+            redirect_to = request.POST.get('redirect-to')
             user = auth.authenticate(username=username, password=password)
             if user and user.is_active:
                 auth.login(request, user)
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect(redirect_to or reverse('main:index'))
 
     else:
         form = ShopUserLoginForm()
@@ -23,6 +25,7 @@ def login(request):
     context = {
         'page_title': 'логин',
         'form': form,
+        'redirect_to': redirect_to,
     }
     return render(request, 'authapp/login.html', context)
 
@@ -52,13 +55,13 @@ def register(request):
 
 def edit(request):
     if request.method == 'POST':
-        form = ShopUserUserChangeForm(request.POST, request.FILES, instance=request.user)
+        form = ShopUserChangeForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(request.path_info)
 
     else:
-        form = ShopUserUserChangeForm(instance=request.user)
+        form = ShopUserChangeForm(instance=request.user)
 
     context = {
         'page_title': 'редактирование',

@@ -30,7 +30,7 @@ class ShopUserCreationForm(AgeValidatorMixin, UserCreationForm):
             field.help_text = ''
 
 
-class ShopUserUserChangeForm(AgeValidatorMixin, UserChangeForm):
+class ShopUserChangeForm(AgeValidatorMixin, UserChangeForm):
     class Meta:
         model = get_user_model()
         fields = ("username", "password", "email", "first_name", "last_name", "age", "avatar")
